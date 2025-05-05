@@ -14,6 +14,20 @@ services:
     networks:
       - laravel
 
+  queue-worker:
+      build:
+          context: .
+          dockerfile: Dockerfile.worker
+      container_name: laravel-queue
+      ports:
+          - "6001:6001"
+      volumes:
+          - .:/var/www
+      depends_on:
+          - app
+      networks:
+          - laravel
+
   nginx:
     image: nginx:alpine
     container_name: nginx

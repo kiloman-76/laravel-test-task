@@ -1,0 +1,16 @@
+FROM php:8.2-cli
+
+RUN apt-get update && apt-get install -y \
+    libzip-dev libpq-dev unzip zip git curl supervisor \
+    && docker-php-ext-install pdo pdo_pgsql zip
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+COPY supervisord.conf /etc/supervisord.conf
+
+RUN mkdir -p /var/www/storage/logs
+RUN echo "memory_limit=512M" >> /usr/local/etc/php/conf.d/uploads.ini
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
